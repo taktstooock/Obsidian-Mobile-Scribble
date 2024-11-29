@@ -3,12 +3,13 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="manifest" href="{% static "memos:manifest.json" %}">
+    <link rel="manifest" href="{% static "memos/manifest.json" %}">
 </head>
 <body>
     <div id="editor">
         <textarea id="memo-content"></textarea>
+        {% csrf_token %}
     </div>
-    <script src="{% static "memos:js/main.js" %}"></script>
+    <script src="{% static "memos/js/main.js" %}"></script>
 </body>
 </html>

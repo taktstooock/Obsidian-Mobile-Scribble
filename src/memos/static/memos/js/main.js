@@ -28,7 +28,7 @@ class MemoApp {
     async saveMemo() {
         const content = this.editor.value;
         try {
-            const response = await fetch('/memos/', {
+            const response = await fetch('/app/memos/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -45,9 +45,10 @@ class MemoApp {
 
     async syncMemos() {
         try {
-            const response = await fetch('/memos/');
+            const response = await fetch('/app/memos/');
             const data = await response.json();
             // メモの表示処理
+            console.log(data);
         } catch (error) {
             console.log('Failed to sync memos:', error);
         }

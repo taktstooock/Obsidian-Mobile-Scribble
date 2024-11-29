@@ -6,3 +6,4 @@ class Memo(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='memos')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    vault_synced_at = models.DateTimeField(null=True, blank=True)

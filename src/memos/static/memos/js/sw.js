@@ -4,9 +4,9 @@ self.addEventListener('install', event => {
     event.waitUntil(
         caches.open(CACHE_NAME).then(cache => {
             return cache.addAll([
-                '/',
-                '/static/css/style.css',
-                '/static/js/main.js',
+                '/app/',
+                '/static/memos/css/style.css',
+                '/static/memos/js/main.js',
             ]);
         })
     );
