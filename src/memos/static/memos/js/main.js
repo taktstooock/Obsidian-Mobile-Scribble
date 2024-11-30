@@ -6,21 +6,15 @@ if ('serviceWorker' in navigator) {
 class MemoApp {
     constructor() {
         this.editor = document.getElementById('memo-content');
-        this.setupAutoSave();
+        this.saveButton = document.getElementById('save-button');
+        this.memoList = document.getElementById('memo-list-container');
         this.setupSync();
-    }
-
-    setupAutoSave() {
-        let timeout;
-        this.editor.addEventListener('input', () => {
-            clearTimeout(timeout);
-            timeout = setTimeout(() => this.saveMemo(), 2000);
-        });
+        this.setupSaveButton();
     }
 
     setupSync() {
         // 定期的な同期
-        setInterval(() => this.syncMemos(), 60000);
+        setInterval(() => this.syncMemos(), 600000);
         // 初回読み込み
         this.syncMemos();
     }
@@ -37,6 +31,7 @@ class MemoApp {
                 body: JSON.stringify({ content }),
             });
             if (!response.ok) throw new Error('Failed to save memo');
+            await this.syncMemos(); // 保存成功後に同期を実行
         } catch (error) {
             // オフライン時はローカルストレージに保存
             localStorage.setItem('pendingMemo', content);
@@ -47,8 +42,11 @@ class MemoApp {
         try {
             const response = await fetch('/app/memos/');
             const data = await response.json();
-            // メモの表示処理
-            console.log(data);
+            console.log('Memo list:', data);
+            // オブジェクトから配列に変換してマッピング
+            this.memoList.innerHTML = Object.entries(data.memos).map(([id, content]) => 
+                `<li>${content}</li>`
+            ).join('');
         } catch (error) {
             console.log('Failed to sync memos:', error);
         }
@@ -56,6 +54,12 @@ class MemoApp {
 
     getCsrfToken() {
         return document.querySelector('[name=csrfmiddlewaretoken]').value;
+    }
+
+    setupSaveButton() {
+        this.saveButton.addEventListener('click', () => {
+            this.saveMemo();
+        });
     }
 }
 

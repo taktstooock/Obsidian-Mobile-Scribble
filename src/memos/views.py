@@ -3,14 +3,10 @@ from django.views.generic import TemplateView
 from django.http import JsonResponse
 from .models import Memo
 from .sync import Sync, VaultDatabaseSync
-import os
+import json
 
 class IndexView(TemplateView):
     template_name = 'memos/index.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        return context
 
 class MemoView(View):
     def get(self, request):        
@@ -22,8 +18,9 @@ class MemoView(View):
         return JsonResponse({'memos': memos})
     
     def post(self, request):
-        content = request.POST.get('content')
-        
+        data = json.loads(request.body.decode())
+        content = data['content']
+
         # メモを保存
         memo = Memo.objects.create(
             content=content,

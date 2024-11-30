@@ -6,9 +6,21 @@
     <link rel="manifest" href="{% static "memos/manifest.json" %}">
 </head>
 <body>
+    <header>
+        <h1>Memo</h1>
+        <button id="vault-sync-button">Sync</button>
+    </header>
+    <div id="memo-list">
+        <ul id="memo-list-container">
+            <li class="dummy-memo">Loading...</li>
+            <li class="dummy-memo">Loading...</li>
+            <li class="dummy-memo">Loading...</li>
+        </ul>
+    </div>
     <div id="editor">
         <textarea id="memo-content"></textarea>
         {% csrf_token %}
+        <button id="save-button">Save</button>
     </div>
     <script src="{% static "memos/js/main.js" %}"></script>
 </body>
