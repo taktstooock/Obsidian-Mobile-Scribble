@@ -130,6 +130,12 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # Vaults directory
 VAULTS_DIR = BASE_DIR / "vaults"
 
+# Daily note directory name
+DAILY_NOTE_DIR = "daily"
+
+# Template file name
+TEMPLATE_FILE = Path("templates/temp_daily.md")
+
 # auth
 AUTH_USER_MODEL = "accounts.User"
 
