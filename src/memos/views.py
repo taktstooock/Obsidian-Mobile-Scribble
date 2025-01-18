@@ -4,8 +4,9 @@ from django.http import JsonResponse
 from .models import Memo
 from .sync import Sync, VaultDatabaseSync
 import json
+from django.contrib.auth.mixins import LoginRequiredMixin
 
-class IndexView(TemplateView):
+class IndexView(TemplateView, LoginRequiredMixin):
     template_name = 'memos/index.html'
 
 class MemoView(View):
