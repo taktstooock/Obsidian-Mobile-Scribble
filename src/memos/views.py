@@ -27,9 +27,6 @@ class MemoView(View):
             content=content,
             author=request.user
         )
-
-        vaultdatabasesync = VaultDatabaseSync(request.user)
-        vaultdatabasesync.db2vault()
         
         return JsonResponse({'id': memo.id})
     

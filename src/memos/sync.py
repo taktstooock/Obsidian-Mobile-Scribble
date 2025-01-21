@@ -3,8 +3,7 @@ from django.conf import settings
 from .dailynote_interpreter import DailyNoteInterpreter, parse_dailynotes
 from .obsidian_templater import TemplateEngine
 from pathlib import Path
-import datetime
-from .models import Memo
+from django.utils import timezone
 
 class GitSync:
     def __init__(self, repo_path):
@@ -46,14 +45,15 @@ class VaultDatabaseSync:
         unsynced_memos = self.user.memos.filter(vault_synced_at__isnull=True)
         memo_dates = unsynced_memos.values_list('created_at', flat=True)
         for memo_date in memo_dates:
+            memo_date = timezone.localtime(memo_date).date()
             output_path = self.daily_notes_path / f"{memo_date.strftime('%Y-%m-%d')}.md"
             if not output_path.exists():
                 template_engine = TemplateEngine()
                 template_engine.process_template(self.template_path, memo_date, output_path)
-            target_memos = unsynced_memos.filter(created_at=memo_date)
+            target_memos = self.user.memos.filter(created_at__date=memo_date)
             interpreter = DailyNoteInterpreter(output_path)
             interpreter.update_entries(target_memos.values_list('created_at', 'content'))
-            target_memos.update(vault_synced_at=datetime.datetime.now())
+            target_memos.update(vault_synced_at=timezone.now())
 
 class Sync:
     def __init__(self, user):

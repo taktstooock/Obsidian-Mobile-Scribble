@@ -1,18 +1,20 @@
 import os
+from pathlib import Path
 import re
 from datetime import datetime
+from django.utils import timezone
 
 class DailyNoteInterpreter:
-    def __init__(self, daily_note_file_path):
-        self.daily_note_file = open(daily_note_file_path, 'r', encoding='utf-8')
+    def __init__(self, daily_note_file_path : Path):
+        self.daily_note_file = open(daily_note_file_path, 'r+', encoding='utf-8')
 
         if not self.daily_note_file:
             raise FileNotFoundError(f"File {daily_note_file_path} not found")
-        if not daily_note_file_path.endswith('.md'):
+        if not daily_note_file_path.suffix == '.md':
             raise ValueError("File must be a markdown file")
         
         self.content = self.daily_note_file.read()
-        self.date = datetime.strptime(os.path.basename(daily_note_file_path).split('.')[0], '%Y-%m-%d')
+        self.date = timezone.make_aware(datetime.strptime(os.path.basename(daily_note_file_path).split('.')[0], '%Y-%m-%d')).date()
 
     def __del__(self):
         self.daily_note_file.close()
@@ -26,6 +28,7 @@ class DailyNoteInterpreter:
                 time_str, text = entry
                 time_obj = datetime.strptime(time_str, '%H:%M:%S').time()
                 time_obj = datetime.combine(self.date, time_obj)
+                time_obj = timezone.make_aware(time_obj)
                 journal_entries.append((time_obj, text))
 
         return journal_entries
@@ -33,8 +36,9 @@ class DailyNoteInterpreter:
     def update_entries(self, journal_entries):
         journal_section = re.search(r'# journal(.*?)(?=\n#|\Z)', self.content, re.DOTALL)
         if journal_section:
-            updated_journal_section = journal_section.group(0)
+            updated_journal_section = '# journal\n'
             for time, text in journal_entries:
+                time = timezone.localtime(time)
                 if time.date() != self.date:
                     raise ValueError("Memo date does not match daily note date")
                 time_str = time.strftime('%H:%M:%S')
