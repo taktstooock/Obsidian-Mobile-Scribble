@@ -1,9 +1,10 @@
 from git import Repo
 from django.conf import settings
-from . import dailynote_interpreter
+from .dailynote_interpreter import DailyNoteInterpreter, parse_dailynotes
 from .obsidian_templater import TemplateEngine
 from pathlib import Path
 import datetime
+from .models import Memo
 
 class GitSync:
     def __init__(self, repo_path):
@@ -25,7 +26,7 @@ class VaultDatabaseSync:
         self.template_path : Path = self.vault_path / settings.TEMPLATE_FILE
     
     def vault2db(self):
-        journal_entries = dailynote_interpreter.parse_dailynotes(self.daily_notes_path)
+        journal_entries = parse_dailynotes(self.daily_notes_path)
         print(journal_entries)
         for time, text in journal_entries:
             if self.user.memos.filter(created_at=time).exists():
@@ -42,14 +43,17 @@ class VaultDatabaseSync:
                 )
 
     def db2vault(self):
-        for memo in self.user.memos.filter(vault_synced_at__isnull=True):
-            output_path = self.daily_notes_path / f"{memo.created_at.strftime('%Y-%m-%d')}.md"
+        unsynced_memos = self.user.memos.filter(vault_synced_at__isnull=True)
+        memo_dates = unsynced_memos.values_list('created_at', flat=True)
+        for memo_date in memo_dates:
+            output_path = self.daily_notes_path / f"{memo_date.strftime('%Y-%m-%d')}.md"
             if not output_path.exists():
                 template_engine = TemplateEngine()
-                template_engine.process_template(self.template_path, memo.created_at, output_path)
-            # add memos...
-            memo.vault_synced_at = datetime.datetime.now()
-            memo.save()
+                template_engine.process_template(self.template_path, memo_date, output_path)
+            target_memos = unsynced_memos.filter(created_at=memo_date)
+            interpreter = DailyNoteInterpreter(output_path)
+            interpreter.update_entries(target_memos.values_list('created_at', 'content'))
+            target_memos.update(vault_synced_at=datetime.datetime.now())
 
 class Sync:
     def __init__(self, user):
