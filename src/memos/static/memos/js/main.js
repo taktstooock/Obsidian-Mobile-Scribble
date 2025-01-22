@@ -1,6 +1,6 @@
 // Service Workerの登録
 if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/static/memos/js/sw.js');
+    navigator.serviceWorker.register('../src/static/memos/js/sw.js');
 }
 
 class MemoApp {
@@ -115,7 +115,9 @@ class MemoApp {
     }
 
     parseText(text) {
-        text = text.replaceAll('\n', '<br>') // 改行を<br>に変換
+        text = text
+            .replace(/</g, '&lt;').replace(/>/g, '&gt;') // タグをエスケープ
+            .replaceAll('\n', '<br>') // 改行を<br>に変換
             .replace(/\[(.*?)\]\((https?:\/\/\S+)\)/g, '<a href="$2">$1</a>') // リンクを変換
             .replace(/(\*\*|__)(.*?)\1/g, '<strong>$2</strong>') // 強調を太字に変換
             .replace(/(\*|_)(.*?)\1/g, '<em>$2</em>') // 斜体を変換

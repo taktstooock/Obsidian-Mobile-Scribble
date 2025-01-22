@@ -5,8 +5,8 @@ self.addEventListener('install', event => {
         caches.open(CACHE_NAME).then(cache => {
             return cache.addAll([
                 '/app/',
-                '/static/memos/css/style.css',
-                '/static/memos/js/main.js',
+                '../css/style.css',
+                'main.js',
             ]);
         })
     );
