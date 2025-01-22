@@ -114,8 +114,10 @@ class MemoApp {
             .replace(/</g, '&lt;').replace(/>/g, '&gt;') // タグをエスケープ
             .replaceAll('\n', '<br>') // 改行を<br>に変換
             .replace(/\[(.*?)\]\((https?:\/\/\S+)\)/g, '<a href="$2">$1</a>') // リンクを変換
-            .replace(/(\*\*|__)(.*?)\1/g, '<strong>$2</strong>') // 強調を太字に変換
-            .replace(/(\*|_)(.*?)\1/g, '<em>$2</em>') // 斜体を変換
+            .replace(/`([^`]+)`/g, '<code>$1</code>') // インラインコードを変換
+            .replace(/(\*\*|__)(?![^<]*<\/code>)(.*?)\1/g, '<strong>$2</strong>') // 強調を太字に変換
+            .replace(/(\*|_)(?![^<]*<\/code>)(.*?)\1/g, '<em>$2</em>') // 斜体を変換
+            .replace(/~~(?![^<]*<\/code>)(.*?)~~/g, '<del>$1</del>') // 打ち消し線を変換
             ;
         return text;
     }

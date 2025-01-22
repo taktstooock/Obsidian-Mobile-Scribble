@@ -14,7 +14,7 @@ class GitSync:
         self.repo.remotes.origin.pull()
     
     def push(self):
-        if self.repo.is_dirty():
+        if self.repo.is_dirty(untracked_files=True):
             print("Committing and pushing changes")
             self.repo.git.add('.')
             self.repo.index.commit("Update memo on OMS")
