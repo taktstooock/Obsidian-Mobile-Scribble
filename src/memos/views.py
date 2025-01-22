@@ -32,6 +32,7 @@ class MemoView(View):
     
 class SyncView(View):
     def post(self, request):
+        print('syncing')
         sync = Sync(request.user)
         sync.sync()
         return JsonResponse({'status': 'success'})

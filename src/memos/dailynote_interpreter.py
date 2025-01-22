@@ -23,9 +23,14 @@ class DailyNoteInterpreter:
         journal_entries = []
         journal_section = re.search(r'# journal(.*?)(?=\n#|\Z)', self.content, re.DOTALL)
         if journal_section:
-            entries = re.findall(r'- (\d{2}:\d{2}:\d{2}) (.+)', journal_section.group(1))
-            for entry in entries:
-                time_str, text = entry
+            entries = re.findall(
+                r'^-\s+(\d{2}:\d{2}:\d{2})(.*?)(?=^-\s+\d{2}:\d{2}:\d{2}|\Z)',
+                journal_section.group(1),
+                re.DOTALL | re.MULTILINE
+            )
+            for time_str, text in entries:
+                text = text.strip()
+                text = text.replace('\n\t', '\n')
                 time_obj = datetime.strptime(time_str, '%H:%M:%S').time()
                 time_obj = datetime.combine(self.date, time_obj)
                 time_obj = timezone.make_aware(time_obj)
@@ -42,8 +47,10 @@ class DailyNoteInterpreter:
                 if time.date() != self.date:
                     raise ValueError("Memo date does not match daily note date")
                 time_str = time.strftime('%H:%M:%S')
+                if '\n' in text:
+                    text = '\n\t' + text.replace('\n', '\n\t')
                 updated_journal_section += f'- {time_str} {text}\n'
-            self.content = self.content.replace(journal_section.group(0), updated_journal_section)
+            self.content = self.content.replace(journal_section.group(0), updated_journal_section.strip())
             self.daily_note_file.seek(0)
             self.daily_note_file.truncate()
             self.daily_note_file.write(self.content)
@@ -51,18 +58,18 @@ class DailyNoteInterpreter:
         else:
             raise ValueError("Journal section not found in daily note file")
 
-def parse_dailynotes(directory_path):
+def parse_dailynotes(directory_path: Path):
     journal_entries = []
 
     for filename in os.listdir(directory_path):
         if filename.endswith('.md'):
-            daily_note_file_path = os.path.join(directory_path, filename)
+            daily_note_file_path = directory_path / filename
             interpreter = DailyNoteInterpreter(daily_note_file_path)
             journal_entries.extend(interpreter.extract_entries())
 
     return journal_entries
 
 if __name__ == '__main__':
-    journal_entries = parse_dailynotes('daily')
+    journal_entries = parse_dailynotes(Path('vaults/2/daily'))
     for time, text in journal_entries:
         print(f'{time}: {text}')
