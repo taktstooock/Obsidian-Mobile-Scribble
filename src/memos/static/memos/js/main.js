@@ -25,7 +25,7 @@ class MemoApp {
         this.saveButton.disabled = true;
         const content = this.editor.value;
         try {
-            const response = await fetch('/app/memos/', {
+            const response = await fetch('memos/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -47,7 +47,7 @@ class MemoApp {
 
     async fetchMemos() {
         try {
-            const response = await fetch('/app/memos/');
+            const response = await fetch('memos/');
             const data = await response.json();
             console.log('Memo list:', data);
             // オブジェクトから配列に変換してマッピング
@@ -67,7 +67,7 @@ class MemoApp {
         this.syncButton.innerHTML = '<div class="loader">Syncing...</div>';
         this.syncButton.classList.add('syncing');
         try {
-            const response = await fetch('/app/sync/', {
+            const response = await fetch('sync/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
