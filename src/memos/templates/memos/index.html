@@ -3,11 +3,14 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Obsidian Mobile Scribble</title>
+    <link rel="stylesheet" href="{% static "memos/css/style.css" %}">
+    <link rel="icon" href="{% static "memos/icons/favicon.ico" %}">
     <link rel="manifest" href="{% static "memos/manifest.json" %}">
 </head>
 <body>
     <header>
-        <h1>Memo</h1>
+        <h1 class="site-title">OMS</h1>
         <button id="vault-sync-button">Sync</button>
     </header>
     <div id="memo-list">
@@ -20,7 +23,7 @@
     <div id="editor">
         <textarea id="memo-content"></textarea>
         {% csrf_token %}
-        <button id="save-button">Save</button>
+        <button id="save-button"><span class="dli-plus-circle"><span></span></span>Add</button>
     </div>
     <script src="{% static "memos/js/main.js" %}"></script>
 </body>

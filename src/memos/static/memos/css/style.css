@@ -1,0 +1,230 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+header {
+    background-color: #333;
+    color: white;
+    padding: 10px 0;
+    position: sticky;
+    top: 0;
+
+    h1.site-title {
+        display: inline-block;
+        position: relative;
+        margin: 5px;
+        left: 1rem;
+        font-size: 1.5rem;
+    }
+
+    #vault-sync-button {
+        display: inline-block;
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        width: 8rem;
+        height: 2rem;
+        background-color: #4ba4d8;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        margin: 0 10px;
+        transition: background-color 0.3s;
+
+        &:hover {
+            background-color: #6f8e9e;
+        }
+    }
+
+    #vault-sync-button.syncing {
+        background-color: #d8a64b;
+    }
+
+    #vault-sync-button.success {
+        background-color: #50b631;
+    }
+}
+
+#memo-list {
+    max-width: 600px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
+    margin-bottom: 10rem;
+    padding: 10px;
+
+    ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+
+        li {
+            padding: 10px;
+            margin: 1rem;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+
+            time.created-at {
+                color: #666;
+                font-size: 0.8rem;
+                display: block;
+            }
+        }
+        li.synced-false {
+            background-color: #b9b9b9;
+            color: #333;
+        }
+    }
+}
+
+#editor {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #333;
+    text-align: center;
+    padding: 10px 0;
+
+    textarea {
+        padding: 10px;
+        box-sizing: border-box;
+        border: none;
+        border-radius: 5px;
+        background-color: white;
+        color: black;
+        font-size: 16px;
+        resize: none;
+        overflow-y: hidden;
+        height: auto;
+
+        @media screen and (min-width: 600px) {
+            width: 600px;
+        }
+        @media screen and (max-width: 600px) {
+            width: 90%;
+        }
+    }
+
+    #save-button {
+        display: block;
+        background-color: #4ba4d8;
+        color: white;
+        width: 8rem;
+        font-size: 1rem;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        margin: 0 auto;
+        transition: background-color 0.3s;
+
+        &:hover {
+            background-color: #6f8e9e;
+        }
+    }
+}
+
+/* ref: https://projects.lukehaas.me/css-loaders/ */
+.loader,
+.loader:before,
+.loader:after {
+  border-radius: 50%;
+  width: 0.8rem;
+  height: 0.8rem;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+  -webkit-animation: load7 1.8s infinite ease-in-out;
+  animation: load7 1.8s infinite ease-in-out;
+}
+.loader {
+  color: #ffffff;
+  font-size: 10px;
+  margin: 0 auto;
+  position: relative;
+  text-indent: -9999em;
+  -webkit-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  transform: translateZ(0);
+  transform: translateY(-1.5rem);
+  -webkit-animation-delay: -0.16s;
+  animation-delay: -0.16s;
+}
+.loader:before,
+.loader:after {
+  content: '';
+  position: absolute;
+  top: 0;
+}
+.loader:before {
+  left: -3em;
+  -webkit-animation-delay: -0.32s;
+  animation-delay: -0.32s;
+}
+.loader:after {
+  left: 3em;
+}
+@-webkit-keyframes load7 {
+  0%,
+  80%,
+  100% {
+    box-shadow: 0 2.5em 0 -1.3em;
+  }
+  40% {
+    box-shadow: 0 2.5em 0 0;
+  }
+}
+@keyframes load7 {
+  0%,
+  80%,
+  100% {
+    box-shadow: 0 2.5em 0 -1.3em;
+  }
+  40% {
+    box-shadow: 0 2.5em 0 0;
+  }
+}
+
+/* ref: https://design-library.jp/lab/icons-plus-circle */
+.dli-plus-circle {
+    display: inline-block;
+    vertical-align: middle;
+    color: white;
+    line-height: 1;
+    position: relative;
+    left: -1rem;
+    width: 1em;
+    height: 1em;
+    border: 0.1em solid currentColor;
+    border-radius: 50%;
+    box-sizing: content-box;
+  }
+  
+  .dli-plus-circle > span {
+    width: 52%;
+    height: 0.1em;
+    background: currentColor;
+    border-radius: 0.1em;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+  }
+  
+  .dli-plus-circle > span::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: inherit;
+    border-radius: inherit;
+    transform: rotate(90deg);
+  }

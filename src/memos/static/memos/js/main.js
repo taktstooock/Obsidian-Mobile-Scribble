@@ -11,6 +11,7 @@ class MemoApp {
         this.memoList = document.getElementById('memo-list-container');
         this.setupSync();
         this.setupButtons();
+        this.setupEditor();
     }
 
     setupSync() {
@@ -21,6 +22,7 @@ class MemoApp {
     }
 
     async saveMemo() {
+        this.saveButton.disabled = true;
         const content = this.editor.value;
         try {
             const response = await fetch('/app/memos/', {
@@ -32,10 +34,14 @@ class MemoApp {
                 body: JSON.stringify({ content }),
             });
             if (!response.ok) throw new Error('Failed to save memo');
+            this.editor.value = '';
+            this.saveButton.disabled = false;
             await this.fetchMemos(); // 保存成功後に同期を実行
         } catch (error) {
             // オフライン時はローカルストレージに保存
             localStorage.setItem('pendingMemo', content);
+            console.log('Failed to save memo:', error);
+            this.saveButton.disabled = false;
         }
     }
 
@@ -45,8 +51,11 @@ class MemoApp {
             const data = await response.json();
             console.log('Memo list:', data);
             // オブジェクトから配列に変換してマッピング
-            this.memoList.innerHTML = Object.entries(data.memos).map(([id, content]) => 
-                `<li>${this.parseText(content)}</li>`
+            const sortedMemos = Object.entries(data.memos).sort((a, b) => {
+                return new Date(b[1][1]) - new Date(a[1][1]);
+            });
+            this.memoList.innerHTML = sortedMemos.map(([id, [content, time, is_synced]]) =>
+                `<li id="${id}" class="synced-${is_synced}"><time class="created-at" datetime="${time}">${time}</time>${this.parseText(content)}</li>`
             ).join('');
         } catch (error) {
             console.log('Failed to sync memos:', error);
@@ -55,7 +64,8 @@ class MemoApp {
 
     async syncMemos() {
         this.syncButton.disabled = true;
-        this.syncButton.textContent = '同期中...';
+        this.syncButton.innerHTML = '<div class="loader">Syncing...</div>';
+        this.syncButton.classList.add('syncing');
         try {
             const response = await fetch('/app/sync/', {
                 method: 'POST',
@@ -66,14 +76,19 @@ class MemoApp {
             });
             if (!response.ok) throw new Error('Failed to sync memos');
             await this.fetchMemos();
-            this.syncButton.textContent = '同期成功';
+            this.syncButton.textContent = 'Success!';
+            this.syncButton.classList.remove('syncing');
+            this.syncButton.classList.add('success');
         } catch (error) {
             console.log('Failed to sync memos:', error);
-            this.syncButton.textContent = '同期失敗';
+            this.syncButton.textContent = 'Failed!';
+            this.syncButton.classList.remove('syncing');
+            this.syncButton.classList.add('failed');
         } finally {
             setTimeout(() => {
                 this.syncButton.disabled = false;
-                this.syncButton.textContent = '同期';
+                this.syncButton.textContent = 'Sync';
+                this.syncButton.classList.remove('success', 'failed', 'syncing');
             }, 2000);
         }
     }
@@ -88,6 +103,14 @@ class MemoApp {
         });
         this.syncButton.addEventListener('click', () => {
             this.syncMemos();
+        });
+    }
+
+    setupEditor() {
+        this.editor.addEventListener('keydown', (event) => {
+            if (event.ctrlKey && event.key === 'Enter') {
+                this.saveMemo();
+            }
         });
     }
 
