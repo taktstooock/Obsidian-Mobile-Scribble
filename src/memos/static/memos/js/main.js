@@ -1,8 +1,3 @@
-// Service Workerの登録
-if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('../src/static/memos/js/sw.js');
-}
-
 class MemoApp {
     constructor() {
         this.editor = document.getElementById('memo-content');
