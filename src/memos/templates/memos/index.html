@@ -1,30 +1,40 @@
 <!DOCTYPE html>
 {% load static %}
 <html>
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Obsidian Mobile Scribble</title>
-    <link rel="stylesheet" href="{% static "memos/css/style.css" %}">
-    <link rel="icon" href="{% static "memos/icons/favicon.ico" %}">
-    <link rel="manifest" href="{% static "memos/manifest.json" %}">
-</head>
-<body>
+    <link rel="stylesheet" href="{% static 'memos/css/style.css' %}" />
+    <link rel="icon" href="{% static 'memos/icons/favicon.ico' %}" />
+    <link rel="manifest" href="{% static 'memos/manifest.json' %}" crossorigin="use-credentials" />
+  </head>
+  <body>
     <header>
-        <h1 class="site-title">OMS</h1>
-        <button id="vault-sync-button">Sync</button>
+      <h1 class="site-title">OMS</h1>
+      <button id="vault-sync-button">Sync</button>
     </header>
     <div id="memo-list">
-        <ul id="memo-list-container">
-            <li class="dummy-memo">Loading...</li>
-            <li class="dummy-memo">Loading...</li>
-            <li class="dummy-memo">Loading...</li>
-        </ul>
+      <ul id="memo-list-container">
+        <li class="dummy-memo">Loading...</li>
+        <li class="dummy-memo">Loading...</li>
+        <li class="dummy-memo">Loading...</li>
+      </ul>
     </div>
     <div id="editor">
-        <textarea id="memo-content"></textarea>
-        {% csrf_token %}
-        <button id="save-button"><span class="dli-plus-circle"><span></span></span>Add</button>
+      <textarea id="memo-content"></textarea>
+      {% csrf_token %}
+      <button id="save-button"><span class="dli-plus-circle"><span></span></span>Add</button>
     </div>
-    <script src="{% static "memos/js/main.js" %}"></script>
-</body>
+    <script>
+      // Service Workerの登録
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register("{% static 'memos/js/sw.js' %}").then(function(registration) {
+          console.log('ServiceWorker registration successful with scope: ', registration.scope);
+        }).catch(function(err) {
+          console.log('ServiceWorker registration failed: ', err);
+        });
+      }
+    </script>
+    <script src="{% static 'memos/js/main.js' %}"></script>
+  </body>
 </html>
