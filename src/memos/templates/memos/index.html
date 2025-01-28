@@ -2,11 +2,13 @@
 {% load static %}
 <html>
   <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content" />
+    <meta charset="utf-8" />
     <title>Obsidian Mobile Scribble</title>
     <link rel="stylesheet" href="{% static 'memos/css/style.css' %}" />
     <link rel="icon" href="{% static 'memos/icons/favicon.ico' %}" />
     <link rel="manifest" href="{% static 'memos/manifest.json' %}" crossorigin="use-credentials" />
+    <meta name="theme-color" content="#a0a0a0" />
   </head>
   <body>
     <header>
@@ -21,18 +23,21 @@
       </ul>
     </div>
     <div id="editor">
-      <textarea id="memo-content"></textarea>
+      <textarea id="memo-input"></textarea>
       {% csrf_token %}
       <button id="save-button"><span class="dli-plus-circle"><span></span></span>Add</button>
     </div>
     <script>
       // Service Workerの登録
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register("{% static 'memos/js/sw.js' %}").then(function(registration) {
-          console.log('ServiceWorker registration successful with scope: ', registration.scope);
-        }).catch(function(err) {
-          console.log('ServiceWorker registration failed: ', err);
-        });
+        navigator.serviceWorker
+          .register("{% static 'memos/js/sw.js' %}")
+          .then(function (registration) {
+            console.log('ServiceWorker registration successful with scope: ', registration.scope)
+          })
+          .catch(function (err) {
+            console.log('ServiceWorker registration failed: ', err)
+          })
       }
     </script>
     <script src="{% static 'memos/js/main.js' %}"></script>
