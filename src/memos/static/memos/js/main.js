@@ -1,6 +1,6 @@
 class MemoApp {
     constructor() {
-        this.editor = document.getElementById('memo-content');
+        this.memoInput = document.getElementById('memo-input');
         this.saveButton = document.getElementById('save-button');
         this.syncButton = document.getElementById('vault-sync-button');
         this.memoList = document.getElementById('memo-list-container');
@@ -18,7 +18,7 @@ class MemoApp {
 
     async saveMemo() {
         this.saveButton.disabled = true;
-        const content = this.editor.value;
+        const content = this.memoInput.value;
         try {
             const response = await fetch('memos/', {
                 method: 'POST',
@@ -29,7 +29,7 @@ class MemoApp {
                 body: JSON.stringify({ content }),
             });
             if (!response.ok) throw new Error('Failed to save memo');
-            this.editor.value = '';
+            this.memoInput.value = '';
             this.saveButton.disabled = false;
             await this.fetchMemos(); // 保存成功後に同期を実行
         } catch (error) {
@@ -102,7 +102,7 @@ class MemoApp {
     }
 
     setupEditor() {
-        this.editor.addEventListener('keydown', (event) => {
+        this.memoInput.addEventListener('keydown', (event) => {
             if (event.ctrlKey && event.key === 'Enter') {
                 this.saveMemo();
             }
@@ -113,7 +113,7 @@ class MemoApp {
         text = text
             .replace(/</g, '&lt;').replace(/>/g, '&gt;') // タグをエスケープ
             .replaceAll('\n', '<br>') // 改行を<br>に変換
-            .replace(/\[(.*?)\]\((https?:\/\/\S+)\)/g, '<a href="$2">$1</a>') // リンクを変換
+            .replace(/\[(.*?)\]\((https?:\/\/\S+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>') // リンクを変換
             .replace(/`([^`]+)`/g, '<code>$1</code>') // インラインコードを変換
             .replace(/(\*\*|__)(?![^<]*<\/code>)(.*?)\1/g, '<strong>$2</strong>') // 強調を太字に変換
             .replace(/(\*|_)(?![^<]*<\/code>)(.*?)\1/g, '<em>$2</em>') // 斜体を変換
